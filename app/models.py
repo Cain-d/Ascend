@@ -1,4 +1,5 @@
 from pydantic import BaseModel
+from typing import Optional
 
 class UserCreate(BaseModel):
     email: str
@@ -21,3 +22,16 @@ class Meal(BaseModel):
     user_id: int
     timestamp: str  # ISO format
     foods: list[int]  # list of food IDs
+
+class ExerciseLog(BaseModel):
+    workout_id: int
+    exercise_id: int
+    set_number: int
+    reps: int
+    weight: float
+
+class Workout(BaseModel):
+    date: str
+    name: str
+
+

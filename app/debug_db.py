@@ -10,4 +10,7 @@ print("📋 Users in DB:")
 for user in users:
     print(user)
 
+
 conn.close()
+
+
