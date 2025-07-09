@@ -1,13 +1,16 @@
-from fastapi import FastAPI, HTTPException
+from fastapi import FastAPI, HTTPException, Depends
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.responses import JSONResponse
 from app.models import UserCreate, UserLogin, Food
-from app import queries
+import queries
+from auth import create_access_token, verify_password, get_current_user
 
 app = FastAPI()
 
+# CORS setup (dev only)
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],  # dev only
+    allow_origins=["*"],
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
@@ -26,9 +29,12 @@ def create_user(user: UserCreate):
 
 @app.post("/login")
 def login(user: UserLogin):
-    if queries.login_user(user.email, user.password):
-        return {"message": "Login successful"}
-    raise HTTPException(status_code=401, detail="Invalid credentials")
+    user_row = queries.get_user_by_email(user.email)
+    if user_row and verify_password(user.password, user_row["password"]):
+        token = create_access_token({"sub": user.email})
+        return JSONResponse(content={"access_token": token, "token_type": "bearer"})
+    else:
+        raise HTTPException(status_code=401, detail="Invalid credentials")
 
 @app.get("/foods")
 def list_foods():
@@ -38,3 +44,7 @@ def list_foods():
 def add_food(food: Food):
     queries.insert_food(food)
     return {"message": "Food added"}
+
+@app.get("/protected")
+def protected(current_user: str = Depends(get_current_user)):
+    return {"message": f"Hello, {current_user}. You’re authorized!"}

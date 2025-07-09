@@ -52,3 +52,14 @@ def get_all_foods():
     results = cursor.fetchall()
     conn.close()
     return results
+
+def get_user_by_email(email):
+    conn = sqlite3.connect(DB_NAME)
+    cursor = conn.cursor()
+    cursor.execute("SELECT * FROM users WHERE email = ?", (email,))
+    row = cursor.fetchone()
+    conn.close()
+
+    if row:
+        return {"id": row[0], "email": row[1], "password": row[2]}
+    return None
