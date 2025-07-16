@@ -1,5 +1,6 @@
 import sqlite3
 from passlib.hash import bcrypt
+from datetime import datetime
 
 DB_NAME = "data/ascend.db"
 
@@ -38,13 +39,16 @@ def login_user(email, password):
 def insert_food(food, user_email):
     conn = sqlite3.connect(DB_NAME)
     cursor = conn.cursor()
+    
+    date = datetime.today().strftime('%Y-%m-%d')  # <-- Add this line
+
     cursor.execute(
         """
-        INSERT INTO foods (name, calories, protein, carbs, fat, fiber, sugar, user_email)
-        VALUES (?, ?, ?, ?, ?, ?, ?, ?)
+        INSERT INTO foods (name, calories, protein, carbs, fat, fiber, sugar, user_email, date)
+        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
         """,
         (food.name, food.calories, food.protein, food.carbs,
-         food.fat, food.fiber, food.sugar, user_email)
+         food.fat, food.fiber, food.sugar, user_email, date)
     )
     conn.commit()
     conn.close()
@@ -217,3 +221,33 @@ def get_workouts_by_user(user_email: str):
         {"id": row[0], "date": row[1], "name": row[2]}
         for row in rows
     ]
+def get_macros_for_user_today(user_email: str, iso_date: str):
+    """
+    Return dict with calories, protein, carbs, fat for given user & date
+    (other fields can be added as needed).
+    """
+    conn = sqlite3.connect(DB_NAME)
+    cursor = conn.cursor()
+
+    cursor.execute(
+        """
+        SELECT 
+            COALESCE(SUM(calories),0),
+            COALESCE(SUM(protein),0),
+            COALESCE(SUM(carbs),0),
+            COALESCE(SUM(fat),0)
+        FROM foods
+        WHERE user_email = ?
+          AND date = ?
+        """,
+        (user_email, iso_date),
+    )
+    row = cursor.fetchone()
+    conn.close()
+
+    return {
+        "calories": row[0],
+        "protein":  row[1],
+        "carbs":    row[2],
+        "fats":     row[3],   # note plural to match frontend label
+    }
