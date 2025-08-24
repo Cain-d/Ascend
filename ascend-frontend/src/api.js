@@ -18,7 +18,6 @@ export async function fetchDailyMacros() {
     const response = await api.get("/daily_macros");
     return response.data;
   } catch (err) {
-    console.error("API error:", err.response?.data || err.message);
     throw new Error("Failed to fetch daily macros");
   }
 }
@@ -29,7 +28,6 @@ export async function fetchAnalyticsTrends(days = 30) {
     const response = await api.get(`/analytics/trends?days=${days}`);
     return response.data;
   } catch (err) {
-    console.error("Analytics trends error:", err.response?.data || err.message);
     throw err;
   }
 }
@@ -39,7 +37,6 @@ export async function fetchAnalyticsPredictions(workoutType = "general") {
     const response = await api.get(`/analytics/predictions?workout_type=${workoutType}`);
     return response.data;
   } catch (err) {
-    console.error("Analytics predictions error:", err.response?.data || err.message);
     throw err;
   }
 }
@@ -49,7 +46,6 @@ export async function fetchAnalyticsRecommendations(goalType = "maintenance") {
     const response = await api.get(`/analytics/recommendations?goal_type=${goalType}`);
     return response.data;
   } catch (err) {
-    console.error("Analytics recommendations error:", err.response?.data || err.message);
     throw err;
   }
 }
@@ -59,7 +55,6 @@ export async function fetchAnalyticsInsights() {
     const response = await api.get("/analytics/insights");
     return response.data;
   } catch (err) {
-    console.error("Analytics insights error:", err.response?.data || err.message);
     throw err;
   }
 }

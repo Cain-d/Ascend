@@ -110,17 +110,14 @@ class AnalyticsService:
             while True:
                 try:
                     # Clean up expired cache entries
-                    expired_count = self.analytics_db.clear_expired_cache()
-                    if expired_count > 0:
-                        print(f"Cleaned up {expired_count} expired cache entries")
+                    self.analytics_db.clear_expired_cache()
                     
                     # Clean up completed background tasks
                     self.background_manager.cleanup_completed_tasks()
                     
                     # Sleep for 1 hour before next cleanup
                     time.sleep(3600)
-                except Exception as e:
-                    print(f"Error in background cleanup: {e}")
+                except Exception:
                     time.sleep(300)  # Sleep 5 minutes on error
         
         cleanup_thread = threading.Thread(target=cleanup_worker, daemon=True)
@@ -168,7 +165,6 @@ class AnalyticsService:
     
     def _comprehensive_correlation_analysis(self, user_email: str, days: int = 90) -> Dict[str, Any]:
         """Perform comprehensive correlation analysis (expensive operation)"""
-        print(f"Starting comprehensive correlation analysis for {user_email}")
         
         # Get extended data for more thorough analysis
         macro_data = self._get_macro_data(user_email, days)
@@ -195,12 +191,10 @@ class AnalyticsService:
             user_email, "comprehensive_correlation", days, results, 0.8, cache_hours=48
         )
         
-        print(f"Completed comprehensive correlation analysis for {user_email}")
         return results
     
     def _long_term_trend_analysis(self, user_email: str, days: int = 180) -> Dict[str, Any]:
         """Perform long-term trend analysis (expensive operation)"""
-        print(f"Starting long-term trend analysis for {user_email}")
         
         # Analyze trends over multiple time periods
         results = {
@@ -225,12 +219,10 @@ class AnalyticsService:
             user_email, "long_term_trends", days, results, 0.9, cache_hours=72
         )
         
-        print(f"Completed long-term trend analysis for {user_email}")
         return results
     
     def _performance_modeling_analysis(self, user_email: str, days: int = 120) -> Dict[str, Any]:
         """Perform advanced performance modeling (expensive operation)"""
-        print(f"Starting performance modeling analysis for {user_email}")
         
         # This would include more sophisticated modeling
         # For now, implementing a comprehensive analysis
@@ -246,7 +238,6 @@ class AnalyticsService:
             user_email, "performance_modeling", days, results, 0.85, cache_hours=48
         )
         
-        print(f"Completed performance modeling analysis for {user_email}")
         return results
     
     def calculate_weight_trends(self, user_email: str, days: int = 30) -> Optional[TrendAnalysis]:
@@ -466,8 +457,7 @@ class AnalyticsService:
                 
                 rows = cursor.fetchall()
                 return [DataPoint(row["date"], row["weight"]) for row in rows]
-        except Exception as e:
-            print(f"Error retrieving weight data: {e}")
+        except Exception:
             return []
     
     def _get_macro_data(self, user_email: str, days: int) -> List[MacroData]:
@@ -499,8 +489,7 @@ class AnalyticsService:
                     carbs=row["carbs"] or 0,
                     fat=row["fat"] or 0
                 ) for row in rows]
-        except Exception as e:
-            print(f"Error retrieving macro data: {e}")
+        except Exception:
             return []
     
     def _get_performance_data(self, user_email: str, days: int) -> List[Dict[str, Any]]:
@@ -525,8 +514,7 @@ class AnalyticsService:
                     "estimated_1rm": row["estimated_1rm"],
                     "total_volume": row["total_volume"] or 0
                 } for row in rows]
-        except Exception as e:
-            print(f"Error retrieving performance data: {e}")
+        except Exception:
             return []
     
     def _calculate_linear_slope(self, data_points: List[DataPoint]) -> float:
@@ -668,8 +656,7 @@ class AnalyticsService:
             correlation = numerator / denominator
             return max(-1.0, min(1.0, correlation))  # Clamp to [-1, 1]
             
-        except Exception as e:
-            print(f"Error calculating correlation: {e}")
+        except Exception:
             return 0.0
     
     def _validate_correlation_data_requirements(self, user_email: str, days: int) -> Dict[str, Any]:

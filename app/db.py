@@ -42,8 +42,7 @@ class AnalyticsDB:
                      expires_at.isoformat(), confidence_level))
                 conn.commit()
                 return True
-        except Exception as e:
-            print(f"Error caching analysis result: {e}")
+        except Exception:
             return False
     
     @staticmethod
@@ -67,8 +66,7 @@ class AnalyticsDB:
                         "cached_at": row["created_at"]
                     }
                 return None
-        except Exception as e:
-            print(f"Error retrieving cached analysis: {e}")
+        except Exception:
             return None
     
     @staticmethod
@@ -80,8 +78,7 @@ class AnalyticsDB:
                 cursor.execute("DELETE FROM analytics_cache WHERE expires_at <= CURRENT_TIMESTAMP")
                 conn.commit()
                 return cursor.rowcount
-        except Exception as e:
-            print(f"Error clearing expired cache: {e}")
+        except Exception:
             return 0
     
     @staticmethod
@@ -104,8 +101,7 @@ class AnalyticsDB:
                      prediction_date, actual_date, accuracy_score))
                 conn.commit()
                 return True
-        except Exception as e:
-            print(f"Error logging prediction accuracy: {e}")
+        except Exception:
             return False
     
     @staticmethod
@@ -141,8 +137,7 @@ class AnalyticsDB:
                         "total_predictions": row["total_predictions"]
                     }
                 return {"average_accuracy": 0, "min_accuracy": 0, "max_accuracy": 0, "total_predictions": 0}
-        except Exception as e:
-            print(f"Error getting prediction accuracy stats: {e}")
+        except Exception:
             return {"average_accuracy": 0, "min_accuracy": 0, "max_accuracy": 0, "total_predictions": 0}
     
     @staticmethod
@@ -177,8 +172,7 @@ class AnalyticsDB:
                 cursor.execute(query, params)
                 conn.commit()
                 return cursor.rowcount
-        except Exception as e:
-            print(f"Error invalidating user cache: {e}")
+        except Exception:
             return 0
     
     @staticmethod
@@ -223,5 +217,4 @@ class AnalyticsDB:
                     "cache_hit_potential": round((total - expired) / max(total, 1) * 100, 2)
                 }
         except Exception as e:
-            print(f"Error getting cache stats: {e}")
             return {"error": str(e)}

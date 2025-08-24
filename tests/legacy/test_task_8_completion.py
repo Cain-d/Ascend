@@ -100,11 +100,11 @@ def test_task_8_requirements():
     # Check that test files exist and contain relevant tests
     import os
     test_files = [
-        "test_prediction_accuracy.py",
-        "test_prediction_accuracy_simple.py", 
-        "test_accuracy_api.py",
-        "test_accuracy_integration.py",
-        "test_task_8_completion.py"
+        "tests/analytics/test_prediction_accuracy.py",
+        "tests/legacy/test_prediction_accuracy_simple.py", 
+        "tests/legacy/test_accuracy_api.py",
+        "tests/legacy/test_accuracy_integration.py",
+        "tests/legacy/test_task_8_completion.py"
     ]
     
     existing_test_files = []

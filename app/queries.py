@@ -9,16 +9,12 @@ def create_user(email, password):
     cursor = conn.cursor()
     hashed_pw = bcrypt.hash(password)
     try:
-        print(f"🔧 Creating user: {email}")
         cursor.execute("INSERT INTO users (email, password) VALUES (?, ?)", (email, hashed_pw))
         conn.commit()
-        print("✅ User created successfully")
         return True
-    except sqlite3.IntegrityError as e:
-        print("❌ IntegrityError:", e)
+    except sqlite3.IntegrityError:
         return False
-    except Exception as e:
-        print("❌ Other error:", e)
+    except Exception:
         return False
     finally:
         conn.close()
@@ -30,8 +26,6 @@ def login_user(email, password):
     row = cursor.fetchone()
     conn.close()
 
-    print(f"🔍 Email lookup: {email}")
-    print(f"🔍 Row from DB: {row}")
     if row:
         return bcrypt.verify(password, row[0])
     return False

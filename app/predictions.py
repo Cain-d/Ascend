@@ -21,7 +21,7 @@ class PredictionService:
     
     def log_prediction_accuracy(self, user_email: str, prediction_type: str, 
                               predicted_value: float, actual_value: float,
-                              prediction_date: str, actual_date: str = None) -> bool:
+                              prediction_date: str, actual_date: Optional[str] = None) -> bool:
         """
         Log prediction accuracy when actual results become available
         
@@ -45,7 +45,7 @@ class PredictionService:
         )
     
     def get_prediction_accuracy_stats(self, user_email: str, 
-                                    prediction_type: str = None) -> Dict[str, Any]:
+                                    prediction_type: Optional[str] = None) -> Dict[str, Any]:
         """
         Get prediction accuracy statistics for a user
         
@@ -56,7 +56,7 @@ class PredictionService:
         Returns:
             Dict containing accuracy statistics
         """
-        return AnalyticsDB.get_prediction_accuracy_stats(user_email, prediction_type)
+        return AnalyticsDB.get_prediction_accuracy_stats(user_email, prediction_type if prediction_type is not None else "")
     
     def get_recent_prediction_accuracy(self, user_email: str, 
                                      days: int = 30) -> List[Dict[str, Any]]:
@@ -99,12 +99,11 @@ class PredictionService:
                 
                 return records
                 
-        except Exception as e:
-            print(f"Error getting recent prediction accuracy: {e}")
+        except Exception:
             return []
     
     def calculate_accuracy_trends(self, user_email: str, 
-                                prediction_type: str = None) -> Dict[str, Any]:
+                                prediction_type: Optional[str] = None) -> Dict[str, Any]:
         """
         Calculate accuracy trends over time to assess model improvement
         
@@ -184,8 +183,7 @@ class PredictionService:
                     ]
                 }
                 
-        except Exception as e:
-            print(f"Error calculating accuracy trends: {e}")
+        except Exception:
             return {
                 "trend": "error",
                 "message": f"Error calculating trends: {str(e)}"
@@ -235,8 +233,7 @@ class PredictionService:
                 
                 return results
                 
-        except Exception as e:
-            print(f"Error getting prediction type performance: {e}")
+        except Exception:
             return {}
     
     def _calculate_reliability_score(self, total_predictions: int, avg_accuracy: float) -> float:
@@ -253,3 +250,4 @@ class PredictionService:
         # Weight accuracy by number of predictions (more predictions = more reliable)
         prediction_weight = min(1.0, total_predictions / 20)  # Full weight at 20+ predictions
         return round(avg_accuracy * prediction_weight, 3)
+    

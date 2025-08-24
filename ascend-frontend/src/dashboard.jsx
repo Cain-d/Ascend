@@ -21,7 +21,9 @@ export default function Dashboard() {
   useEffect(() => {
     fetchDailyMacros()
       .then(setStats)
-      .catch((err) => console.error("Failed to load macros:", err));
+      .catch(() => {
+        // Handle error silently or show user-friendly message
+      });
   }, []);
 
   return (

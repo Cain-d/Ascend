@@ -136,8 +136,7 @@ analytics_service = AnalyticsService()
 try:
     from app.predictions import PredictionService
     prediction_service = PredictionService()
-except ImportError as e:
-    print(f"Warning: Could not import PredictionService: {e}")
+except ImportError:
     # Create a minimal prediction service for testing
     class MinimalPredictionService:
         def predict_workout_performance(self, user_email, workout_type="general"):
