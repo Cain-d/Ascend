@@ -24,14 +24,14 @@ jobs:
           pip install pytest ruff bandit pip-audit || true
 
       - name: Lint (ruff)
-        run: ruff check . || true
+        run: ruff check . 
 
       - name: Security (bandit)
-        run: bandit -q -r app || true
+        run: bandit -q -r app 
 
       - name: Security (pip-audit)
         run: |
-          if [ -f requirements.txt ]; then pip-audit -r requirements.txt || true; fi
+          if [ -f requirements.txt ]; then pip-audit -r requirements.txt 
 
       - name: Tests (FastAPI in-process)
         env:
@@ -40,4 +40,4 @@ jobs:
           SECRET_KEY: "ci-not-a-real-secret"
         run: |
           mkdir -p data
-          pytest -q || true  # flip to strict later
+          pytest -q 
