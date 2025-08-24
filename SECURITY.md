@@ -8,7 +8,7 @@
 
 ## Reporting a Vulnerability
 
-If you discover a security vulnerability, please send an email to [your-email@example.com]. 
+If you discover a security vulnerability, please send an email to opensourceascendhelp@gmail.com. 
 All security vulnerabilities will be promptly addressed.
 
 Please do not report security vulnerabilities through public GitHub issues.
@@ -101,4 +101,4 @@ Regular dependency updates are recommended to address any security vulnerabiliti
 
 ## Contact
 
-For security-related questions or concerns, please contact [your-email@example.com].
+For security-related questions or concerns, please contact opensourceascendhelp@gmail.com.
