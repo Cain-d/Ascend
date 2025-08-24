@@ -8,15 +8,16 @@ import sqlite3
 import os
 from datetime import datetime
 
+
 def run_migration(db_path="data/ascend.db"):
     """Run the analytics tables migration"""
-    
+
     # Ensure the data folder exists
     os.makedirs(os.path.dirname(db_path), exist_ok=True)
-    
+
     conn = sqlite3.connect(db_path)
     cursor = conn.cursor()
-    
+
     try:
         # Analytics cache table for performance optimization
         cursor.execute("""
@@ -32,7 +33,7 @@ def run_migration(db_path="data/ascend.db"):
             UNIQUE(user_email, analysis_type, time_period)
         )
         """)
-        
+
         # Prediction accuracy tracking table
         cursor.execute("""
         CREATE TABLE IF NOT EXISTS prediction_accuracy (
@@ -47,37 +48,40 @@ def run_migration(db_path="data/ascend.db"):
             created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
         )
         """)
-        
+
         # Create indexes for better query performance
         cursor.execute("""
         CREATE INDEX IF NOT EXISTS idx_analytics_cache_user_type 
         ON analytics_cache(user_email, analysis_type)
         """)
-        
+
         cursor.execute("""
         CREATE INDEX IF NOT EXISTS idx_analytics_cache_expires 
         ON analytics_cache(expires_at)
         """)
-        
+
         cursor.execute("""
         CREATE INDEX IF NOT EXISTS idx_prediction_accuracy_user 
         ON prediction_accuracy(user_email, prediction_type)
         """)
-        
+
         cursor.execute("""
         CREATE INDEX IF NOT EXISTS idx_prediction_accuracy_dates 
         ON prediction_accuracy(prediction_date, actual_date)
         """)
-        
+
         conn.commit()
-        print(f"✅ Analytics tables migration completed successfully at {datetime.now()}")
-        
+        print(
+            f"✅ Analytics tables migration completed successfully at {datetime.now()}"
+        )
+
     except Exception as e:
         conn.rollback()
         print(f"❌ Migration failed: {e}")
         raise
     finally:
         conn.close()
+
 
 if __name__ == "__main__":
     run_migration()

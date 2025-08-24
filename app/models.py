@@ -1,14 +1,16 @@
 from pydantic import BaseModel
-from typing import Optional, Dict, List, Any
-from datetime import datetime
+from typing import Dict, List, Any
+
 
 class UserCreate(BaseModel):
     email: str
     password: str
 
+
 class UserLogin(BaseModel):
     email: str
     password: str
+
 
 class Food(BaseModel):
     name: str
@@ -19,10 +21,12 @@ class Food(BaseModel):
     fiber: float
     sugar: float
 
+
 class Meal(BaseModel):
     user_id: int
     timestamp: str  # ISO format
     foods: list[int]  # list of food IDs
+
 
 class ExerciseLog(BaseModel):
     workout_id: int
@@ -31,11 +35,14 @@ class ExerciseLog(BaseModel):
     reps: int
     weight: float
 
+
 class Workout(BaseModel):
     date: str
     name: str
 
+
 # Analytics Data Models
+
 
 class TrendAnalysis(BaseModel):
     metric_name: str
@@ -47,6 +54,7 @@ class TrendAnalysis(BaseModel):
     start_date: str
     end_date: str
 
+
 class PerformancePrediction(BaseModel):
     workout_type: str
     predicted_performance: Dict[str, float]  # {"reps": 12, "weight": 185}
@@ -54,6 +62,7 @@ class PerformancePrediction(BaseModel):
     factors_considered: List[str]
     prediction_date: str
     confidence_score: float
+
 
 class NutritionRecommendation(BaseModel):
     target_calories: float
@@ -65,6 +74,7 @@ class NutritionRecommendation(BaseModel):
     valid_until: str
     recommendation_type: str  # "maintenance", "cutting", "bulking"
 
+
 class AnalysisResult(BaseModel):
     user_email: str
     analysis_type: str
@@ -74,6 +84,7 @@ class AnalysisResult(BaseModel):
     expires_at: str
     confidence_level: float
 
+
 class TrendInsight(BaseModel):
     insight_type: str  # "weight_trend", "macro_pattern", "performance_correlation"
     title: str
@@ -81,6 +92,7 @@ class TrendInsight(BaseModel):
     significance_level: float
     actionable_recommendations: List[str]
     data_period: Dict[str, str]  # {"start": "2024-01-01", "end": "2024-01-31"}
+
 
 class PredictionAccuracy(BaseModel):
     prediction_type: str
@@ -90,5 +102,3 @@ class PredictionAccuracy(BaseModel):
     actual_date: str
     accuracy_score: float
     user_email: str
-
-

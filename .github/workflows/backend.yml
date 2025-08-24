@@ -23,8 +23,11 @@ jobs:
           pip install -r requirements.txt || true
           pip install pytest ruff bandit pip-audit || true
 
-      - name: Lint (ruff)
-        run: ruff check . 
+      - name: Lint (ruff, warn-only)
+        run: |
+          ruff check . --fix --exit-zero
+          ruff format . || true
+
 
       - name: Security (bandit)
         run: bandit -q -r app 

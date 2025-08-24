@@ -26,6 +26,7 @@ os.makedirs(_parent, exist_ok=True)
 
 # ---- Connection helpers ------------------------------------------------------
 
+
 def _connect() -> sqlite3.Connection:
     """
     Create a SQLite connection with sane defaults for web apps and tests.
@@ -63,12 +64,14 @@ def get_db_connection() -> Any:
 
 # ---- Utility ----------------------------------------------------------------
 
+
 def _utc_now_iso() -> str:
     """UTC timestamp in ISO-8601 (no microseconds)."""
     return datetime.now(timezone.utc).replace(microsecond=0).isoformat()
 
 
 # ---- Analytics operations ----------------------------------------------------
+
 
 class AnalyticsDB:
     """Database operations for analytics functionality."""
@@ -89,8 +92,11 @@ class AnalyticsDB:
         Returns True on success, False on error.
         """
         try:
-            expires_at = (datetime.now(timezone.utc) + timedelta(hours=cache_hours)) \
-                .replace(microsecond=0).isoformat()
+            expires_at = (
+                (datetime.now(timezone.utc) + timedelta(hours=cache_hours))
+                .replace(microsecond=0)
+                .isoformat()
+            )
 
             with get_db_connection() as conn:
                 conn.execute(
@@ -328,7 +334,9 @@ class AnalyticsDB:
                     GROUP BY analysis_type
                     """
                 ).fetchall()
-                confidence_by_type = {r["analysis_type"]: float(r["avg_c"]) for r in conf_rows}
+                confidence_by_type = {
+                    r["analysis_type"]: float(r["avg_c"]) for r in conf_rows
+                }
 
                 active = int(total or 0) - int(expired or 0)
                 denom = max(int(total or 0), 1)
