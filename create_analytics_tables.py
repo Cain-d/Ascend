@@ -6,7 +6,7 @@ Create analytics tables for predictive training performance feature
 import sqlite3
 from datetime import datetime
 
-DATABASE_PATH = "data/ascend.db"
+DATABASE_PATH = "../data/ascend.db"
 
 def create_analytics_tables():
     """Create the analytics_cache and prediction_accuracy tables"""

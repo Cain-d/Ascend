@@ -20,3 +20,9 @@ venv/
 
 # Windows
 Thumbs.db
+.env
+venv/
+.venv/
+data/*.db
+ascend-frontend/node_modules/
+test user token.txt

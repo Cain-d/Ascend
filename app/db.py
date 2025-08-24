@@ -9,7 +9,7 @@ from datetime import datetime, timedelta
 from typing import Dict, List, Any, Optional
 from contextlib import contextmanager
 
-DATABASE_PATH = "data/ascend.db"
+DATABASE_PATH = "../data/ascend.db"
 
 @contextmanager
 def get_db_connection():
@@ -144,3 +144,84 @@ class AnalyticsDB:
         except Exception as e:
             print(f"Error getting prediction accuracy stats: {e}")
             return {"average_accuracy": 0, "min_accuracy": 0, "max_accuracy": 0, "total_predictions": 0}
+    
+    @staticmethod
+    def invalidate_user_cache(user_email: str, analysis_types: List[str] = None) -> int:
+        """
+        Invalidate cached analysis results for a user when new data is added
+        
+        Args:
+            user_email: User identifier
+            analysis_types: Specific analysis types to invalidate (None = all)
+            
+        Returns:
+            Number of cache entries invalidated
+        """
+        try:
+            with get_db_connection() as conn:
+                cursor = conn.cursor()
+                
+                if analysis_types:
+                    # Invalidate specific analysis types
+                    placeholders = ','.join(['?' for _ in analysis_types])
+                    query = f"""
+                        DELETE FROM analytics_cache 
+                        WHERE user_email = ? AND analysis_type IN ({placeholders})
+                    """
+                    params = [user_email] + analysis_types
+                else:
+                    # Invalidate all cache for user
+                    query = "DELETE FROM analytics_cache WHERE user_email = ?"
+                    params = [user_email]
+                
+                cursor.execute(query, params)
+                conn.commit()
+                return cursor.rowcount
+        except Exception as e:
+            print(f"Error invalidating user cache: {e}")
+            return 0
+    
+    @staticmethod
+    def get_cache_stats() -> Dict[str, Any]:
+        """Get analytics cache statistics for monitoring"""
+        try:
+            with get_db_connection() as conn:
+                cursor = conn.cursor()
+                
+                # Total cache entries
+                cursor.execute("SELECT COUNT(*) as total FROM analytics_cache")
+                total = cursor.fetchone()["total"]
+                
+                # Expired entries
+                cursor.execute("SELECT COUNT(*) as expired FROM analytics_cache WHERE expires_at <= CURRENT_TIMESTAMP")
+                expired = cursor.fetchone()["expired"]
+                
+                # Cache by analysis type
+                cursor.execute("""
+                    SELECT analysis_type, COUNT(*) as count 
+                    FROM analytics_cache 
+                    WHERE expires_at > CURRENT_TIMESTAMP
+                    GROUP BY analysis_type
+                """)
+                by_type = {row["analysis_type"]: row["count"] for row in cursor.fetchall()}
+                
+                # Average confidence levels
+                cursor.execute("""
+                    SELECT analysis_type, AVG(confidence_level) as avg_confidence
+                    FROM analytics_cache 
+                    WHERE expires_at > CURRENT_TIMESTAMP
+                    GROUP BY analysis_type
+                """)
+                confidence_by_type = {row["analysis_type"]: row["avg_confidence"] for row in cursor.fetchall()}
+                
+                return {
+                    "total_entries": total,
+                    "expired_entries": expired,
+                    "active_entries": total - expired,
+                    "entries_by_type": by_type,
+                    "avg_confidence_by_type": confidence_by_type,
+                    "cache_hit_potential": round((total - expired) / max(total, 1) * 100, 2)
+                }
+        except Exception as e:
+            print(f"Error getting cache stats: {e}")
+            return {"error": str(e)}

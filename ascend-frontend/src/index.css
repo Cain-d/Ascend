@@ -1,5 +1,3 @@
-/* src/index.css */
-/* Ensure this file is processed by PostCSS with Tailwind CSS plugin */
 @tailwind base;
 @tailwind components;
 @tailwind utilities;

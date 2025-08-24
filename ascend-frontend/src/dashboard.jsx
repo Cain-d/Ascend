@@ -1,10 +1,13 @@
+import { useEffect, useState } from "react";
+import { fetchDailyMacros } from "./api";
+
 export default function Dashboard() {
-  const stats = {
-    calories: 2250,
-    protein: 165,
-    carbs: 210,
-    fats: 68,
-  };
+  const [stats, setStats] = useState({
+    calories: 0,
+    protein: 0,
+    carbs: 0,
+    fats: 0,
+  });
 
   const workout = {
     type: "Push (Chest/Triceps)",
@@ -15,27 +18,28 @@ export default function Dashboard() {
     ],
   };
 
+  useEffect(() => {
+    fetchDailyMacros()
+      .then(setStats)
+      .catch((err) => console.error("Failed to load macros:", err));
+  }, []);
+
   return (
     <div className="min-h-screen bg-gray-100 text-gray-800 p-6">
       <h1 className="text-3xl font-bold text-center mb-8">Today</h1>
 
       <div className="grid grid-cols-2 gap-6 max-w-md mx-auto mb-8">
-        <div className="bg-white rounded-2xl shadow p-6 text-center">
-          <h2 className="font-semibold text-lg mb-2">Calories</h2>
-          <p className="text-2xl font-bold">{stats.calories} kcal</p>
-        </div>
-        <div className="bg-white rounded-2xl shadow p-6 text-center">
-          <h2 className="font-semibold text-lg mb-2">Protein</h2>
-          <p className="text-2xl font-bold">{stats.protein} g</p>
-        </div>
-        <div className="bg-white rounded-2xl shadow p-6 text-center">
-          <h2 className="font-semibold text-lg mb-2">Carbs</h2>
-          <p className="text-2xl font-bold">{stats.carbs} g</p>
-        </div>
-        <div className="bg-white rounded-2xl shadow p-6 text-center">
-          <h2 className="font-semibold text-lg mb-2">Fats</h2>
-          <p className="text-2xl font-bold">{stats.fats} g</p>
-        </div>
+        {[
+          ["Calories", `${stats.calories} kcal`],
+          ["Protein", `${stats.protein} g`],
+          ["Carbs", `${stats.carbs} g`],
+          ["Fats", `${stats.fats} g`],
+        ].map(([label, value]) => (
+          <div key={label} className="bg-white rounded-2xl shadow p-6 text-center">
+            <h2 className="font-semibold text-lg mb-2">{label}</h2>
+            <p className="text-2xl font-bold">{value}</p>
+          </div>
+        ))}
       </div>
 
       <div className="max-w-xl mx-auto">
@@ -43,8 +47,8 @@ export default function Dashboard() {
           Workout — {workout.type}
         </h2>
         <div className="bg-white rounded-xl shadow p-4 space-y-3">
-          {workout.exercises.map((ex, index) => (
-            <div key={index} className="flex justify-between border-b pb-1">
+          {workout.exercises.map((ex) => (
+            <div key={ex.name} className="flex justify-between border-b pb-1">
               <span>{ex.name}</span>
               <span>
                 {ex.sets} × {ex.reps}
@@ -56,3 +60,4 @@ export default function Dashboard() {
     </div>
   );
 }
+
