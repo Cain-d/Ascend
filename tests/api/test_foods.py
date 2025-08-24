@@ -1,51 +1,26 @@
-#!/usr/bin/env python3
+from fastapi.testclient import TestClient
+from app.main import app
 
-print("Starting import test...")
+client = TestClient(app)
 
-try:
-    print("Importing dataclass...")
-    from dataclasses import dataclass
-    print("✓ dataclass imported")
-    
-    print("Importing typing...")
-    from typing import Dict, List, Optional, Any
-    print("✓ typing imported")
-    
-    print("Importing datetime...")
-    from datetime import datetime, timedelta
-    print("✓ datetime imported")
-    
-    print("Importing statistics...")
-    import statistics
-    print("✓ statistics imported")
-    
-    print("Importing math...")
-    import math
-    print("✓ math imported")
-    
-    print("Importing app.db...")
-    from app.db import get_db_connection, AnalyticsDB
-    print("✓ app.db imported")
-    
-    print("Importing app.models...")
-    from app.models import PerformancePrediction, NutritionRecommendation
-    print("✓ app.models imported")
-    
-    print("Importing app.analytics...")
-    from app.analytics import AnalyticsService, DataPoint, MacroData
-    print("✓ app.analytics imported")
-    
-    print("Now importing app.predictions...")
-    import app.predictions
-    print("✓ app.predictions module imported")
-    
-    print("Module contents:", dir(app.predictions))
-    
-    print("Trying to import PredictionService...")
-    from app.predictions import PredictionService
-    print("✓ PredictionService imported successfully!")
-    
-except Exception as e:
-    print(f"❌ Error: {e}")
-    import traceback
-    traceback.print_exc()
+def test_root_or_health():
+    # adjust to your actual route(s)
+    r = client.get("/")
+    assert r.status_code in (200, 404)
+
+def test_foods_crud_smoke(monkeypatch):
+    # If your endpoints require auth, override that dependency for tests:
+    # Example shown if you have a Depends(CurrentUser).
+    try:
+        from app.main import CurrentUser  # adjust import to wherever you define it
+        app.dependency_overrides[CurrentUser] = lambda: "test@example.com"
+    except Exception:
+        pass  # if not needed, ignore
+
+    payload = {"name":"Oats","calories":380,"protein":13,"carbs":67,"fat":7,"fiber":8,"sugar":1}
+    r = client.post("/foods", json=payload)
+    assert r.status_code in (200, 201)
+
+    r = client.get("/foods")
+    assert r.status_code == 200
+    assert isinstance(r.json(), list)
