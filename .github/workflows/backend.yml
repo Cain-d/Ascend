@@ -37,11 +37,6 @@ jobs:
         run: pip-audit -r requirements.txt --ignore-vuln GHSA-wj6h-64fc-37mp
 
 
-      - name: Tests (FastAPI in-process)
-        env:
-          ENV: ci
-          DATABASE_PATH: "data/test.db"
-          SECRET_KEY: "ci-not-a-real-secret"
-        run: |
-          mkdir -p data
-          pytest -q 
+      - name: Tests (smoke only for CI)
+        run: pytest -q tests/test_ci_smoke.py
+
