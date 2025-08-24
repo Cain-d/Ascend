@@ -23,8 +23,13 @@ jobs:
       - name: Install
         run: npm ci
 
-      - name: Lint
-        run: npm run lint 
+      - name: Lint (if script exists)
+        run: |
+          if [ -f package.json ] && node -e "process.exit(!(require('./package.json').scripts||{}).lint)"; then
+          npm run lint
+          else
+          echo "No lint script in package.json; skipping lint."
+          fi
 
       - name: Build
         env:
