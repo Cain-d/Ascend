@@ -101,4 +101,4 @@ Regular dependency updates are recommended to address any security vulnerabiliti
 
 ## Contact
 
-For security-related questions or concerns, please contact [your-email@example.com].
+For security-related questions or concerns, please contact opensourceascendhelp@gmail.com.
