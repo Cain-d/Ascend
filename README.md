@@ -20,7 +20,7 @@ It uses a **FastAPI backend** and a **React (Vite + Tailwind) frontend**, with *
 - Daily macro summaries  
 - Workout & exercise logging  
 - Analytics endpoints for trends and performance insights  
-- Clean separation: `app/` (API backend) and `ascend-frontend/` (React UI)  
+- Clean separation: `app/` (API backend) and `frontend/` (React UI)  
 
 ---
 
@@ -50,7 +50,7 @@ Swagger docs: http://127.0.0.1:8000/docs
 ### 2. Frontend
 ```bash
 
-cd ascend-frontend
+cd frontend
 npm install
 npm run dev
 

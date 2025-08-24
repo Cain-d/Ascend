@@ -26,3 +26,5 @@ venv/
 data/*.db
 ascend-frontend/node_modules/
 test user token.txt
+data/*.sqlite3
+frontend/node_modules/
